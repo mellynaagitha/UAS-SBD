@@ -1,0 +1,68 @@
+MariaDB [(none)]> SHOW DATABASES ;
++--------------------+
+| Database           |
++--------------------+
+| drugs              |
+| information_schema |
+| kuismsbd           |
+| mysql              |
+| performance_schema |
+| phpmyadmin         |
+| sbd                |
+| test               |
++--------------------+
+8 rows in set (0.001 sec)
+
+MariaDB [(none)]> USE sbd;
+Database changed
+MariaDB [sbd]> CREATE or REPLACE VIEW 201402107 AS SELECT
+    -> ;
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near '201402107 AS SELECT' at line 1
+MariaDB [sbd]> EXIT
+MariaDB [sbd]> SELECT 
+    -> a.id, a.task_name, b.task_status, b.task_comments, d.category_name as 'Category',
+    -> DATEDIFF(a.task_duration_end, a.task_duration_start) as 'Lama Pengerjaan',
+    -> c.name as 'Create By', (SELECT name from users where users.id = task_dailies.user_verify_id ) as 'Verified By'
+    -> FROM task_plans a
+    -> RIGHT JOIN task_dailies b ON a.id = b.plan_id
+    -> INNER JOIN users c ON b.id = c.id
+    -> RIGHT JOIN task_categories d ON a.category_id = d.id
+    -> ;
+ERROR 1054 (42S22): Unknown column 'a.task_duration_start' in 'field list'
+MariaDB [sbd]> SELECT 
+    -> a.id, a.task_name, b.task_status, b.task_comments, d.category_name as 'Category',
+    -> DATEDIFF(a.ask_duration_end, a.task_duration_start) as 'Lama Pengerjaan',
+    -> c.name as 'Create By', (SELECT name from users where users.id = task_dailies.user_verify_id ) as 'Verified By'
+    -> FROM task_plans a
+    -> RIGHT JOIN task_dailies b ON a.id = b.plan_id
+    -> INNER JOIN users c ON b.id = c.id
+    -> RIGHT JOIN task_categories d ON a.category_id = d.id
+    -> ;
+ERROR 1054 (42S22): Unknown column 'a.ask_duration_end' in 'field list'
+MariaDB [sbd]> SELECT 
+    -> a.id, a.task_name, b.task_status, b.task_comments, d.category_name as 'Category',
+    -> DATEDIFF(a.task_duration_end, a.ask_duration_start) as 'Lama Pengerjaan',
+    -> c.name as 'Create By', (SELECT name from users where users.id = task_dailies.user_verify_id ) as 'Verified By'
+    -> FROM task_plans a
+    -> RIGHT JOIN task_dailies b ON a.id = b.plan_id
+    -> INNER JOIN users c ON b.id = c.id
+    -> RIGHT JOIN task_categories d ON a.category_id = d.id
+    -> ;
+ERROR 1054 (42S22): Unknown column 'task_dailies.user_verify_id' in 'where clause'
+MariaDB [sbd]> CREATE VIEW 201402107 AS SELECT a.id, a.task_name, a.task_status, c.id, c. category_name, b.indicator_name, d.id, d.name, a.task_priorityFROM task_plans a, task_indicators b, task_categories c, users dWHERE a.user_create = d.id AND a.category_id = c.id AND a.indicator_id = b.id;
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near '201402107 AS SELECT a.id, a.task_name, a.task_status, c.id, c. category_name,...' at line 1
+MariaDB [sbd]> CREATE OR VIEW 201402107 AS
+    -> SELECT a.id, a.task_name, a.task_status, c.id, c. category_name, b.indicator_name, d.id, d.name, a.task_priority
+    -> FROM task_plans a, task_indicators b, task_categories c, users d
+    -> WHERE a.user_create = d.id AND a.category_id = c.id AND a.indicator_id = b.id
+    -> ;
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near 'VIEW 201402107 AS
+SELECT a.id, a.task_name, a.task_status, c.id, c. category_...' at line 1
+MariaDB [sbd]> CREATE VIEW 201402107 AS 
+    -> SELECT a.id, a.task_name, a.task_status, c.id, c. category_name, b.indicator_name, d.id, d.name, a.task_priority
+    -> FROM (task_plans a JOIN task_indicators b ON a.indicator_id = b.id JOIN task_categories c ON a.category_id = c.id JOIN users d ON a.user_create = d.id)
+    -> 
+    -> WHERE name = ' User A ';
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near '201402107 AS 
+SELECT a.id, a.task_name, a.task_status, c.id, c. category_name...' at line 1
+MariaDB [sbd]> exit
